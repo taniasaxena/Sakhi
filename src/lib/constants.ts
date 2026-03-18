@@ -24,6 +24,29 @@ export const PHASE_DESCRIPTIONS: Record<CyclePhase, string> = {
   unknown: 'Log your period to get insights.',
 };
 
+export const PHASE_DETAIL: Record<CyclePhase, { days: string; what: string }> = {
+  menstrual: {
+    days: 'Days 1–5',
+    what: 'The uterine lining sheds. Estrogen and progesterone are at their lowest. Rest, warmth, and iron-rich foods help.',
+  },
+  follicular: {
+    days: 'Days 6–13',
+    what: 'Estrogen rises as follicles develop in the ovaries. Energy, mood, and focus improve — a great time to start new things.',
+  },
+  ovulation: {
+    days: 'Days 14–16',
+    what: 'A mature egg is released. Estrogen peaks and LH surges. Fertility is at its highest. You may feel more social and confident.',
+  },
+  luteal: {
+    days: 'Days 17–end',
+    what: 'Progesterone rises to prepare the uterus. If no pregnancy occurs, levels drop and PMS symptoms may appear toward the end.',
+  },
+  unknown: {
+    days: '—',
+    what: 'Log your period to start tracking your cycle.',
+  },
+};
+
 export const COLORS = {
   background: '#0A0A0A',
   surface: '#1C1C1E',
