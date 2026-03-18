@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutChangeEvent, StyleSheet, Text, View } from 'react-native';
+import { LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { COLORS, PHASE_COLORS, PHASE_DETAIL, PHASE_LABELS } from '../../lib/constants';
 import { CyclePhase } from '../../types';
 
@@ -28,6 +28,7 @@ interface CycleTimelineProps {
 
 export function CycleTimeline({ currentDay, cycleLength, currentPhase }: CycleTimelineProps) {
   const [barWidth, setBarWidth] = useState(0);
+  const [legendOpen, setLegendOpen] = useState(false);
   const phases = getPhaseSegments(cycleLength);
 
   const clampedDay = Math.min(Math.max(currentDay, 1), cycleLength);
@@ -96,12 +97,15 @@ export function CycleTimeline({ currentDay, cycleLength, currentPhase }: CycleTi
         })}
       </View>
 
-      {/* Divider */}
+      {/* Divider + legend toggle */}
       <View style={styles.divider} />
 
-      {/* Legend */}
-      <Text style={styles.legendHeading}>What each phase means</Text>
-      <View style={styles.legend}>
+      <TouchableOpacity onPress={() => setLegendOpen(o => !o)} style={styles.legendToggle} activeOpacity={0.7}>
+        <Text style={styles.legendHeading}>What each phase means</Text>
+        <Text style={styles.chevron}>{legendOpen ? '▲' : '▼'}</Text>
+      </TouchableOpacity>
+
+      {legendOpen && <View style={styles.legend}>
         {CYCLE_PHASES.map((phase) => {
           const { days, what } = PHASE_DETAIL[phase];
           const isActive = phase === currentPhase;
@@ -129,7 +133,7 @@ export function CycleTimeline({ currentDay, cycleLength, currentPhase }: CycleTi
             </View>
           );
         })}
-      </View>
+      </View>}
     </View>
   );
 }
@@ -211,12 +215,21 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.border,
     marginVertical: 4,
   },
+  legendToggle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   legendHeading: {
     color: COLORS.textMuted,
     fontSize: 12,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 1,
+  },
+  chevron: {
+    color: COLORS.textMuted,
+    fontSize: 10,
   },
   legend: {
     gap: 8,
