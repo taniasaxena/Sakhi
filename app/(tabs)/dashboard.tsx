@@ -15,7 +15,7 @@ import { useCycle } from '../../src/context/CycleContext';
 import { useAuth } from '../../src/context/AuthContext';
 import { useCycleCalculations } from '../../src/hooks/useCycleCalculations';
 import { PhaseCard } from '../../src/components/dashboard/PhaseCard';
-import { CycleRing } from '../../src/components/dashboard/CycleRing';
+import { CycleTimeline } from '../../src/components/dashboard/CycleTimeline';
 import { StatRow } from '../../src/components/dashboard/StatRow';
 import { OvulationWindow } from '../../src/components/dashboard/OvulationWindow';
 
@@ -61,14 +61,12 @@ export default function DashboardScreen() {
             cycleLength={cycleInfo.cycleLength}
           />
 
-          {/* Cycle ring */}
-          <View style={styles.ringWrapper}>
-            <CycleRing
-              currentDay={cycleInfo.currentDayOfCycle}
-              cycleLength={cycleInfo.cycleLength}
-              phase={cycleInfo.currentPhase}
-            />
-          </View>
+          {/* Full cycle timeline */}
+          <CycleTimeline
+            currentDay={cycleInfo.currentDayOfCycle}
+            cycleLength={cycleInfo.cycleLength}
+            currentPhase={cycleInfo.currentPhase}
+          />
 
           {/* Stats */}
           <View style={styles.statsCard}>
@@ -165,10 +163,6 @@ const styles = StyleSheet.create({
   centered: {
     paddingVertical: 80,
     alignItems: 'center',
-  },
-  ringWrapper: {
-    alignItems: 'center',
-    paddingVertical: 8,
   },
   statsCard: {
     backgroundColor: COLORS.surface,
