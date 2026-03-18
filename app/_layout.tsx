@@ -7,7 +7,7 @@ import { CycleProvider } from '../src/context/CycleContext';
 import { COLORS } from '../src/lib/constants';
 
 function AuthGuard() {
-  const { session, loading } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
   const segments = useSegments();
 
@@ -16,12 +16,12 @@ function AuthGuard() {
 
     const inAuthGroup = segments[0] === '(auth)';
 
-    if (!session && !inAuthGroup) {
+    if (!user && !inAuthGroup) {
       router.replace('/(auth)/sign-in');
-    } else if (session && inAuthGroup) {
+    } else if (user && inAuthGroup) {
       router.replace('/(tabs)/dashboard');
     }
-  }, [session, loading, segments]);
+  }, [user, loading, segments]);
 
   if (loading) {
     return (

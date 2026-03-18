@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { format } from 'date-fns';
 import { useRouter } from 'expo-router';
-import { COLORS, PHASE_COLORS } from '../../src/lib/constants';
+import { COLORS } from '../../src/lib/constants';
 import { useCycle } from '../../src/context/CycleContext';
 import { useAuth } from '../../src/context/AuthContext';
 import { useCycleCalculations } from '../../src/hooks/useCycleCalculations';

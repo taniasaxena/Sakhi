@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { apiRequest } from '../lib/api';
 import { PeriodLog, UserProfile } from '../types';
 import { useAuth } from './AuthContext';
 
@@ -29,16 +29,12 @@ export function CycleProvider({ children }: { children: React.ReactNode }) {
     setError(null);
 
     const [logsResult, profileResult] = await Promise.all([
-      supabase
-        .from('period_logs')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('start_date', { ascending: false }),
-      supabase.from('profiles').select('*').eq('id', user.id).single(),
+      apiRequest<PeriodLog[]>('/api/periods'),
+      apiRequest<UserProfile>('/api/profile'),
     ]);
 
     if (logsResult.error) {
-      setError(logsResult.error.message);
+      setError(logsResult.error);
     } else {
       setPeriodLogs(logsResult.data ?? []);
     }
@@ -64,13 +60,11 @@ export function CycleProvider({ children }: { children: React.ReactNode }) {
     notes?: string
   ): Promise<string | null> => {
     if (!user) return 'Not authenticated';
-    const { error } = await supabase.from('period_logs').insert({
-      user_id: user.id,
-      start_date: startDate,
-      end_date: endDate ?? null,
-      notes: notes ?? null,
+    const { error } = await apiRequest('/api/periods', {
+      method: 'POST',
+      body: JSON.stringify({ start_date: startDate, end_date: endDate, notes }),
     });
-    if (error) return error.message;
+    if (error) return error;
     await fetchData();
     return null;
   };
@@ -79,15 +73,18 @@ export function CycleProvider({ children }: { children: React.ReactNode }) {
     id: string,
     data: Partial<Pick<PeriodLog, 'start_date' | 'end_date' | 'notes'>>
   ): Promise<string | null> => {
-    const { error } = await supabase.from('period_logs').update(data).eq('id', id);
-    if (error) return error.message;
+    const { error } = await apiRequest(`/api/periods/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+    if (error) return error;
     await fetchData();
     return null;
   };
 
   const deleteLog = async (id: string): Promise<string | null> => {
-    const { error } = await supabase.from('period_logs').delete().eq('id', id);
-    if (error) return error.message;
+    const { error } = await apiRequest(`/api/periods/${id}`, { method: 'DELETE' });
+    if (error) return error;
     await fetchData();
     return null;
   };
