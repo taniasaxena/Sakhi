@@ -1,71 +1,83 @@
 import React from 'react';
-import { SymbolView } from 'expo-symbols';
-import { Link, Tabs } from 'expo-router';
-import { Platform, Pressable } from 'react-native';
+import { Tabs } from 'expo-router';
+import { StyleSheet, Text, View } from 'react-native';
+import { COLORS } from '../../src/lib/constants';
 
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+function TabIcon({ emoji, label, focused }: { emoji: string; label: string; focused: boolean }) {
+  return (
+    <View style={styles.iconWrapper}>
+      <Text style={[styles.emoji, focused && styles.emojiActive]}>{emoji}</Text>
+      <Text style={[styles.tabLabel, focused && styles.tabLabelActive]}>{label}</Text>
+    </View>
+  );
+}
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
-      }}>
+        headerShown: false,
+        tabBarStyle: styles.tabBar,
+        tabBarShowLabel: false,
+      }}
+    >
       <Tabs.Screen
-        name="index"
+        name="dashboard"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{
-                ios: 'chevron.left.forwardslash.chevron.right',
-                android: 'code',
-                web: 'code',
-              }}
-              tintColor={color}
-              size={28}
-            />
-          ),
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable style={{ marginRight: 15 }}>
-                {({ pressed }) => (
-                  <SymbolView
-                    name={{ ios: 'info.circle', android: 'info', web: 'info' }}
-                    size={25}
-                    tintColor={Colors[colorScheme].text}
-                    style={{ opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
+          tabBarIcon: ({ focused }) => (
+            <TabIcon emoji="🌙" label="Today" focused={focused} />
           ),
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="log"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{
-                ios: 'chevron.left.forwardslash.chevron.right',
-                android: 'code',
-                web: 'code',
-              }}
-              tintColor={color}
-              size={28}
-            />
+          tabBarIcon: ({ focused }) => (
+            <TabIcon emoji="+" label="Log" focused={focused} />
           ),
         }}
       />
+      <Tabs.Screen
+        name="history"
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <TabIcon emoji="📋" label="History" focused={focused} />
+          ),
+        }}
+      />
+      {/* Hide legacy template screens */}
+      <Tabs.Screen name="index" options={{ href: null }} />
+      <Tabs.Screen name="two" options={{ href: null }} />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    backgroundColor: COLORS.surface,
+    borderTopColor: COLORS.border,
+    borderTopWidth: 1,
+    height: 70,
+    paddingBottom: 8,
+  },
+  iconWrapper: {
+    alignItems: 'center',
+    gap: 2,
+    paddingTop: 6,
+  },
+  emoji: {
+    fontSize: 22,
+    opacity: 0.5,
+  },
+  emojiActive: {
+    opacity: 1,
+  },
+  tabLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: COLORS.textMuted,
+  },
+  tabLabelActive: {
+    color: COLORS.text,
+  },
+});
